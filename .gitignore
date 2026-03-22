@@ -1,0 +1,8 @@
+CLAUDE.md
+docs/
+node_modules/
+dist/
+.DS_Store
+*.raw
+.cursor/
+.claude/

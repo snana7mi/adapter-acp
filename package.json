@@ -1,0 +1,45 @@
+{
+  "name": "adapter-acp",
+  "version": "0.1.0",
+  "description": "Universal ACP adapter that bridges native CLI agents into standard ACP agents",
+  "type": "module",
+  "bin": {
+    "adapter-acp": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/snana7mi/adapter-acp.git"
+  },
+  "keywords": [
+    "acp",
+    "agent-client-protocol",
+    "claude",
+    "codex",
+    "ai-agent",
+    "adapter"
+  ],
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "test": "bun test",
+    "build": "bun build src/index.ts --outdir dist --target bun",
+    "prepublishOnly": "bun run build"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@agentclientprotocol/sdk": "~0.16.1",
+    "@anthropic-ai/claude-agent-sdk": "^0.2.81",
+    "node-pty": "^1.1.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

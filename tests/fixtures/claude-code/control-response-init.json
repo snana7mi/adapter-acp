@@ -1,0 +1,175 @@
+{
+  "type": "control_response",
+  "response": {
+    "subtype": "success",
+    "request_id": "init_1",
+    "response": {
+      "commands": [
+        {
+          "name": "update-config",
+          "description": "Use this skill to configure the Claude Code harness via settings.json. Automated behaviors (\"from now on when X\", \"each time X\", \"whenever X\", \"before/after X\") require hooks configured in settings.json - the harness executes these, not Claude, so memory/preferences cannot fulfill them. Also use for: permissions (\"allow X\", \"add permission\", \"move permission to\"), env vars (\"set X=Y\"), hook troubleshooting, or any changes to settings.json/settings.local.json files. Examples: \"allow npm commands\", \"add bq permission to global settings\", \"move permission to user settings\", \"set DEBUG=true\", \"when claude stops show X\". For simple settings like theme/model, use Config tool. (bundled)",
+          "argumentHint": ""
+        },
+        {
+          "name": "debug",
+          "description": "Enable debug logging for this session and help diagnose issues (bundled)",
+          "argumentHint": "[issue description]"
+        },
+        {
+          "name": "simplify",
+          "description": "Review changed code for reuse, quality, and efficiency, then fix any issues found. (bundled)",
+          "argumentHint": ""
+        },
+        {
+          "name": "batch",
+          "description": "Research and plan a large-scale change, then execute it in parallel across 5–30 isolated worktree agents that each open a PR. (bundled)",
+          "argumentHint": "<instruction>"
+        },
+        {
+          "name": "loop",
+          "description": "Run a prompt or slash command on a recurring interval (e.g. /loop 5m /foo, defaults to 10m) (bundled)",
+          "argumentHint": "[interval] <prompt>"
+        },
+        {
+          "name": "claude-api",
+          "description": "Build apps with the Claude API or Anthropic SDK.\nTRIGGER when: code imports `anthropic`/`@anthropic-ai/sdk`/`claude_agent_sdk`, or user asks to use Claude API, Anthropic SDKs, or Agent SDK.\nDO NOT TRIGGER when: code imports `openai`/other AI SDK, general programming, or ML/data-science tasks. (bundled)",
+          "argumentHint": ""
+        },
+        {
+          "name": "compact",
+          "description": "Clear conversation history but keep a summary in context. Optional: /compact [instructions for summarization]",
+          "argumentHint": "<optional custom summarization instructions>"
+        },
+        {
+          "name": "context",
+          "description": "Show current context usage",
+          "argumentHint": ""
+        },
+        {
+          "name": "cost",
+          "description": "Show the total cost and duration of the current session",
+          "argumentHint": ""
+        },
+        {
+          "name": "heapdump",
+          "description": "Dump the JS heap to ~/Desktop",
+          "argumentHint": ""
+        },
+        {
+          "name": "init",
+          "description": "Initialize a new CLAUDE.md file with codebase documentation",
+          "argumentHint": ""
+        },
+        {
+          "name": "pr-comments",
+          "description": "Get comments from a GitHub pull request",
+          "argumentHint": ""
+        },
+        {
+          "name": "release-notes",
+          "description": "View release notes",
+          "argumentHint": ""
+        },
+        {
+          "name": "review",
+          "description": "Review a pull request",
+          "argumentHint": ""
+        },
+        {
+          "name": "security-review",
+          "description": "Complete a security review of the pending changes on the current branch",
+          "argumentHint": ""
+        },
+        {
+          "name": "insights",
+          "description": "Generate a report analyzing your Claude Code sessions",
+          "argumentHint": ""
+        }
+      ],
+      "agents": [
+        {
+          "name": "general-purpose",
+          "description": "General-purpose agent for researching complex questions, searching for code, and executing multi-step tasks. When you are searching for a keyword or file and are not confident that you will find the right match in the first few tries use this agent to perform the search for you."
+        },
+        {
+          "name": "statusline-setup",
+          "description": "Use this agent to configure the user's Claude Code status line setting.",
+          "model": "sonnet"
+        },
+        {
+          "name": "Explore",
+          "description": "Fast agent specialized for exploring codebases. Use this when you need to quickly find files by patterns (eg. \"src/components/**/*.tsx\"), search code for keywords (eg. \"API endpoints\"), or answer questions about the codebase (eg. \"how do API endpoints work?\"). When calling this agent, specify the desired thoroughness level: \"quick\" for basic searches, \"medium\" for moderate exploration, or \"very thorough\" for comprehensive analysis across multiple locations and naming conventions.",
+          "model": "haiku"
+        },
+        {
+          "name": "Plan",
+          "description": "Software architect agent for designing implementation plans. Use this when you need to plan the implementation strategy for a task. Returns step-by-step plans, identifies critical files, and considers architectural trade-offs."
+        },
+        {
+          "name": "claude-code-guide",
+          "description": "Use this agent when the user asks questions (\"Can Claude...\", \"Does Claude...\", \"How do I...\") about: (1) Claude Code (the CLI tool) - features, hooks, slash commands, MCP servers, settings, IDE integrations, keyboard shortcuts; (2) Claude Agent SDK - building custom agents; (3) Claude API (formerly Anthropic API) - API usage, tool use, Anthropic SDK usage. **IMPORTANT:** Before spawning a new agent, check if there is already a running or recently completed claude-code-guide agent that you can continue via SendMessage.",
+          "model": "haiku"
+        }
+      ],
+      "output_style": "default",
+      "available_output_styles": [
+        "default",
+        "Explanatory",
+        "Learning"
+      ],
+      "models": [
+        {
+          "value": "default",
+          "displayName": "Default (recommended)",
+          "description": "Use the default model (currently Sonnet 4.6) · $3/$15 per Mtok",
+          "supportsEffort": true,
+          "supportedEffortLevels": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "supportsAdaptiveThinking": true,
+          "supportsAutoMode": true
+        },
+        {
+          "value": "sonnet[1m]",
+          "displayName": "Sonnet (1M context)",
+          "description": "Sonnet 4.6 for long sessions · $3/$15 per Mtok",
+          "supportsEffort": true,
+          "supportedEffortLevels": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "supportsAdaptiveThinking": true,
+          "supportsAutoMode": true
+        },
+        {
+          "value": "opus[1m]",
+          "displayName": "Opus (1M context)",
+          "description": "Opus 4.6 with 1M context · Most capable for complex work",
+          "supportsEffort": true,
+          "supportedEffortLevels": [
+            "low",
+            "medium",
+            "high",
+            "max"
+          ],
+          "supportsAdaptiveThinking": true,
+          "supportsFastMode": true,
+          "supportsAutoMode": true
+        },
+        {
+          "value": "haiku",
+          "displayName": "Haiku",
+          "description": "Haiku 4.5 · Fastest for quick answers · $1/$5 per Mtok"
+        }
+      ],
+      "account": {
+        "tokenSource": "none",
+        "apiProvider": "firstParty"
+      },
+      "pid": 97413
+    }
+  }
+}
