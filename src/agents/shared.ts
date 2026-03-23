@@ -19,20 +19,20 @@ export interface AgentClient {
 }
 
 export async function detectAgentVersion(agentName: string): Promise<string> {
+  const { execFile } = await import("child_process");
+  const { promisify } = await import("util");
+  const execFileAsync = promisify(execFile);
   try {
-    const proc = Bun.spawn([agentName, "--version"], { stdout: "pipe", stderr: "pipe" });
-    const exitCode = await proc.exited;
-    if (exitCode !== 0) {
-      const stderr = await new Response(proc.stderr).text();
-      process.stderr.write(`Error: '${agentName}' not found or returned error.\n${stderr}\n`);
-      process.exit(1);
-    }
-    const text = await new Response(proc.stdout).text();
-    const version = text.trim().split("\n")[0] || "unknown";
+    const { stdout } = await execFileAsync(agentName, ["--version"]);
+    const version = stdout.trim().split("\n")[0] || "unknown";
     log(`Detected agent version: ${version}`);
     return version;
-  } catch {
-    process.stderr.write(`Error: '${agentName}' command not found. Is it installed?\n`);
+  } catch (err: any) {
+    if (err.stderr) {
+      process.stderr.write(`Error: '${agentName}' not found or returned error.\n${err.stderr}\n`);
+    } else {
+      process.stderr.write(`Error: '${agentName}' command not found. Is it installed?\n`);
+    }
     process.exit(1);
   }
 }

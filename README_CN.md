@@ -52,6 +52,17 @@ ACP Client (stdin/stdout, JSON-RPC 2.0 over ND-JSON)
 ### 通过 npm 安装
 
 ```bash
+# 全局安装（推荐，适用于 Zed 等 ACP 客户端）
+npm install -g adapter-acp
+
+# 然后运行
+adapter-acp claude
+adapter-acp codex
+```
+
+或直接运行（无需安装）：
+
+```bash
 npx adapter-acp claude
 npx adapter-acp codex
 ```

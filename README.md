@@ -52,6 +52,17 @@ ACP Client (stdin/stdout, JSON-RPC 2.0 over ND-JSON)
 ### Install from npm
 
 ```bash
+# Global install (recommended for ACP clients like Zed)
+npm install -g adapter-acp
+
+# Then run
+adapter-acp claude
+adapter-acp codex
+```
+
+Or run directly without installing:
+
+```bash
 npx adapter-acp claude
 npx adapter-acp codex
 ```

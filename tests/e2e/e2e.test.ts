@@ -58,7 +58,7 @@ for (const agent of agents) {
       const { response, updates } = await sendPrompt(
         client,
         sessionId,
-        "Reply with exactly: hello e2e",
+        "Without using any tools, explain in 3-4 sentences: what is the Agent Client Protocol (ACP), what problem does it solve, and how does adapter-acp fit into the ecosystem? Then give me a short comparison between Claude Code and Codex in terms of their architecture approach.",
       );
 
       expect(response.result.stopReason).toBe("end_turn");
@@ -67,7 +67,19 @@ for (const agent of agents) {
         (u: any) => u.params?.update?.sessionUpdate === "agent_message_chunk"
       );
       expect(messageChunks.length).toBeGreaterThan(0);
-    });
+
+      // Extract text from agent_message_chunk updates
+      // content is { type: "text", text: "..." }
+      const fullText = messageChunks
+        .map((u: any) => {
+          const content = u.params?.update?.content;
+          return typeof content === "string" ? content : content?.text ?? "";
+        })
+        .join("");
+      console.log(`\n=== Response (${fullText.length} chars) ===`);
+      console.log(fullText.substring(0, 300));
+      expect(fullText.length).toBeGreaterThan(50);
+    }, 60_000);
 
     test("session/cancel does not crash", async () => {
       client = spawnAdapter(agent, "/tmp");

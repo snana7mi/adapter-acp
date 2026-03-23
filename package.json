@@ -1,6 +1,6 @@
 {
   "name": "adapter-acp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Universal ACP adapter that bridges native CLI agents into standard ACP agents",
   "type": "module",
   "bin": {
@@ -26,7 +26,7 @@
   "scripts": {
     "dev": "bun run src/index.ts",
     "test": "bun test",
-    "build": "bun build src/index.ts --outdir dist --target bun",
+    "build": "bun build src/index.ts --outdir dist --target node",
     "prepublishOnly": "bun run build"
   },
   "license": "Apache-2.0",

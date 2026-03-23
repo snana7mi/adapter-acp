@@ -1,4 +1,4 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
 import { AgentSideConnection, ndJsonStream } from "@agentclientprotocol/sdk";
 import { ClaudeAgent } from "./agents/claude-agent.ts";
@@ -31,7 +31,16 @@ async function main() {
   const stdoutWritable = new WritableStream<Uint8Array>({
     write(chunk) { process.stdout.write(chunk); },
   });
-  const stdinReadable = Bun.stdin.stream();
+  const stdinReadable = new ReadableStream<Uint8Array>({
+    start(controller) {
+      process.stdin.on("data", (chunk: Buffer) => {
+        controller.enqueue(new Uint8Array(chunk));
+      });
+      process.stdin.on("end", () => controller.close());
+      process.stdin.on("error", (err) => controller.error(err));
+      process.stdin.resume();
+    },
+  });
   const stream = ndJsonStream(stdoutWritable, stdinReadable);
 
   let agent: any = null;

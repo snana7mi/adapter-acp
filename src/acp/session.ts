@@ -1,4 +1,5 @@
 import { randomUUID } from "crypto";
+import { spawn, type ChildProcess } from "child_process";
 import type {
   TUIParser,
   ParsedEvent,
@@ -15,7 +16,7 @@ export interface SessionOptions {
 export class Session {
   readonly id: string;
   readonly parser: TUIParser;
-  private proc: any = null; // Bun subprocess
+  private proc: ChildProcess | null = null;
   private io: ProcessIO | null = null;
   private options: SessionOptions;
   private eventHandler: ((event: ParsedEvent) => void) | null = null;
@@ -70,11 +71,9 @@ export class Session {
     const { cwd } = this.options;
     const spawnInfo = this.parser.spawnArgs(cwd);
 
-    this.proc = Bun.spawn([this.parser.command, ...spawnInfo.args], {
+    this.proc = spawn(this.parser.command, spawnInfo.args, {
       cwd,
-      stdout: "pipe",
-      stderr: "pipe",
-      stdin: "pipe",
+      stdio: ["pipe", "pipe", "pipe"],
       env: spawnInfo.env ? { ...process.env, ...spawnInfo.env } : undefined,
     });
 
@@ -85,10 +84,9 @@ export class Session {
     const proc = this.proc;
     this.io = {
       write(data: string) {
-        proc.stdin.write(data);
+        proc.stdin!.write(data);
       },
       onData(cb: (data: string) => void) {
-        // Replace (not append) the callback
         dataCallback = cb;
       },
       onClose(cb: (code: number) => void) {
@@ -96,36 +94,17 @@ export class Session {
       },
     };
 
-    // Read stdout in background
-    this.readStdout(proc, (chunk: string) => {
-      if (dataCallback) dataCallback(chunk);
+    // Read stdout
+    proc.stdout!.on("data", (chunk: Buffer) => {
+      if (dataCallback) dataCallback(chunk.toString());
     });
 
     // Handle process exit
-    proc.exited.then((code: number) => {
+    proc.on("close", (code: number | null) => {
       warn(`Agent process exited with code ${code}`);
-      if (closeCallback) closeCallback(code);
+      if (closeCallback) closeCallback(code ?? 1);
       this.resolvePrompt("end_turn");
     });
-  }
-
-  private async readStdout(
-    proc: any,
-    onChunk: (data: string) => void,
-  ): Promise<void> {
-    if (!proc.stdout) return;
-    const reader = proc.stdout.getReader();
-    const decoder = new TextDecoder();
-    try {
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        const str = decoder.decode(value, { stream: true });
-        onChunk(str);
-      }
-    } catch {
-      // Stream closed
-    }
   }
 
   async discover(): Promise<DiscoveryResult> {
