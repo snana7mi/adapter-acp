@@ -22,10 +22,15 @@ export class ClaudeAgent implements Agent {
   private currentModel: string = "";
   private currentPermissionMode: string = "default";
   private _loopRunning = false;
+  private executablePath: string = "";
 
   constructor(conn: AgentClient, options: AgentOptions) {
     this.conn = conn;
     this.options = options;
+  }
+
+  setExecutablePath(path: string) {
+    this.executablePath = path;
   }
 
   async initialize(params: any): Promise<any> {
@@ -61,6 +66,7 @@ export class ClaudeAgent implements Agent {
       prompt: "/compact", // lightweight command that triggers init without heavy work
       options: {
         cwd,
+        ...(this.executablePath ? { pathToClaudeCodeExecutable: this.executablePath } : {}),
         permissionMode: this.currentPermissionMode as any,
         persistSession: true,
       },
@@ -135,6 +141,7 @@ export class ClaudeAgent implements Agent {
       prompt: text,
       options: {
         cwd: this.cwd,
+        ...(this.executablePath ? { pathToClaudeCodeExecutable: this.executablePath } : {}),
         resume: this.sessionId,
         permissionMode: this.currentPermissionMode as any,
         canUseTool: (toolName: string, input: any, opts: any) =>

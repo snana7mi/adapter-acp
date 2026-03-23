@@ -4,7 +4,7 @@ import { AgentSideConnection, ndJsonStream } from "@agentclientprotocol/sdk";
 import { ClaudeAgent } from "./agents/claude-agent.ts";
 import { CodexAgent } from "./agents/codex-agent.ts";
 import { parseCliArgs } from "./acp/cli.ts";
-import { detectAgentVersion } from "./agents/shared.ts";
+import { detectAgentVersion, resolveExecutablePath } from "./agents/shared.ts";
 import { listParsers } from "./parsers/registry.ts";
 import { setVerbose, log } from "./utils/logger.ts";
 
@@ -26,6 +26,7 @@ async function main() {
   }
 
   const agentVersion = await detectAgentVersion(args.agentName);
+  const executablePath = await resolveExecutablePath(args.agentName);
   log(`adapter-acp started for agent: ${args.agentName}`);
 
   const stdoutWritable = new WritableStream<Uint8Array>({
@@ -56,7 +57,9 @@ async function main() {
       };
 
       if (args.agentName === "claude") {
-        agent = new ClaudeAgent(conn as any, agentOptions);
+        const claude = new ClaudeAgent(conn as any, agentOptions);
+        claude.setExecutablePath(executablePath);
+        agent = claude;
       } else {
         agent = new CodexAgent(conn as any, agentOptions);
       }

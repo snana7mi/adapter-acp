@@ -37,6 +37,25 @@ export async function detectAgentVersion(agentName: string): Promise<string> {
   }
 }
 
+/**
+ * Resolve the absolute path to a CLI agent executable.
+ * This is needed because bundling breaks the SDK's import.meta.url-based
+ * resolution of cli.js. We resolve the actual binary path at startup.
+ */
+export async function resolveExecutablePath(agentName: string): Promise<string> {
+  const { execFile } = await import("child_process");
+  const { promisify } = await import("util");
+  const execFileAsync = promisify(execFile);
+  try {
+    const { stdout } = await execFileAsync("which", [agentName]);
+    const resolvedPath = stdout.trim();
+    log(`Resolved executable path: ${resolvedPath}`);
+    return resolvedPath;
+  } catch {
+    return agentName; // fallback to name, let PATH resolve it
+  }
+}
+
 export { buildConfigOptions, type ModelInfo, type ModeInfo };
 
 export class Pushable<T> implements AsyncIterable<T> {
