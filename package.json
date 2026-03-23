@@ -1,6 +1,6 @@
 {
   "name": "adapter-acp",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Universal ACP adapter that bridges native CLI agents into standard ACP agents",
   "type": "module",
   "bin": {
