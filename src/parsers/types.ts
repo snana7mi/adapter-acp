@@ -75,35 +75,13 @@ export interface TUIParser {
 }
 
 export function buildConfigOptions(
-  models: ModelInfo[],
-  currentModelId: string,
-  modes: ModeInfo[],
-  currentModeId: string,
+  _models: ModelInfo[],
+  _currentModelId: string,
+  _modes: ModeInfo[],
+  _currentModeId: string,
 ): ConfigOption[] {
-  return [
-    {
-      id: "model",
-      name: "Model",
-      description: "AI model to use",
-      type: "select",
-      currentValue: currentModelId,
-      options: models.map((m) => ({
-        value: m.modelId,
-        name: m.name,
-        description: m.description,
-      })),
-    },
-    {
-      id: "mode",
-      name: "Mode",
-      description: "Agent operating mode",
-      type: "select",
-      currentValue: currentModeId,
-      options: modes.map((m) => ({
-        value: m.id,
-        name: m.name,
-        description: m.description,
-      })),
-    },
-  ];
+  // Model and mode are handled by the ACP protocol's native
+  // models/modes fields in session/new response, so we don't
+  // duplicate them as configOptions (which would show twice in the UI).
+  return [];
 }
